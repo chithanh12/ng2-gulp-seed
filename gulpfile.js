@@ -40,30 +40,31 @@ gulp.task('build:server', function () {
 });
 
 /* CLIENTS **/
-gulp.task('build:index', function(){
-   var mapPaths = configs.nodeDependencies.map(f=> {
-      return path.resolve('node_modules', f);
-   });
-   var jsDependencies = gulp.src(mapPaths, {base: 'node_modules'})
-   .pipe(gulp.dest(configs.output +'/libs'));
-   
-   var copyIndex = gulp.src(configs.index)
-   .pipe(gulp.dest(configs.output));
-   return [jsDependencies, copyIndex]; 
+gulp.task('build:index', function () {
+    var mapPaths = configs.nodeDependencies.map(f=> {
+        return path.resolve('node_modules', f);
+    });
+    var jsDependencies = gulp.src(mapPaths, { base: 'node_modules' })
+        .pipe(gulp.dest(configs.output + '/libs'));
+
+    var copyIndex = gulp.src(configs.index)
+        .pipe(gulp.dest(configs.output));
+    return [jsDependencies, copyIndex];
 });
 
-gulp.task('build:app', function(){
-   var tsProject = ts.createProject('client/tsconfig.json');
-   var tsResult = gulp.src(configs.clientTs)
-                    .pipe(sourcemaps.init()) 
-                    .pipe(ts(tsProject));
-   
-   return tsResult.js
-          .pipe(sourcemaps.write())
-          .pipe(gulp.dest(configs.output));
+gulp.task('build:app', function () {
+    var tsProject = ts.createProject('client/tsconfig.json');
+    var tsResult = gulp.src(configs.clientTs)
+        .pipe(sourcemaps.init())
+        .pipe(ts(tsProject));
+
+    return tsResult.js
+    //.pipe(concat("main.js"))
+        .pipe(sourcemaps.write())
+        .pipe(gulp.dest(configs.output));
 });
 
-gulp.task('build', function(callback){
+gulp.task('build', function (callback) {
     runSequence('clean', 'build:server', 'build:index', 'build:app', callback);
 });
 
